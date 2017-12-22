@@ -85,12 +85,12 @@ def write_commands_file(tmpdir, commands_list):
 
     return temporal_file
 
-def test_all_modules(tmpdir):
+def test_execute_commands_from_file(tmpdir):
     commands = ['5 5', '1 2 N', 'LMLMLMLMM', '3 3 E', 'MMRMMRMRRM']
     commands_file = write_commands_file(tmpdir, commands)
 
     communications = CommunicationCenter()
-    commands_list = communications.execute_commands_from_file(commands_file.strpath)
+    communications.execute_commands_from_file(commands_file.strpath)
     assert communications.get_rover_state('Rover 1') == (1, 3, 'N')
     assert communications.get_rover_state('Rover 2') == (5, 1, 'E')
     # assert print(communications) == '1 3 N\n5 1 E'

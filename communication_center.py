@@ -95,6 +95,8 @@ class CommunicationCenter(object):
             else:
                 command_executed = False
         else:
+            print('Mission aborted: Wrong command error')
+            print(f'Command: {command}')
             command_executed = False
 
         return command_executed
@@ -141,13 +143,14 @@ class CommunicationCenter(object):
 
         for each_rover_commands in rovers_commands_list:
             rover_name = self._get_rover_name_by_index(rover_index)
-            print('Executing rover commands:')
+            print('Executing rover commands..')
             print(f'Rover: {rover_name}')
 
-            clean_commands = each_rover_commands.strip()
-            print(f'Commands: {clean_commands}')
-            
-            for each_command in clean_commands:
+            commands_cleared = str(each_rover_commands.strip())
+
+            print(f'Commands: {commands_cleared}')
+
+            for each_command in commands_cleared:
                 if not self.execute_command(rover_name, each_command):
                     correct_execution = False
                     break
@@ -166,7 +169,7 @@ class CommunicationCenter(object):
 
         if len(commands_list) == 0:
             print('No commands for execute')
-            return False
+            return True
 
         print('Configuring grid size..')
 
@@ -190,12 +193,19 @@ class CommunicationCenter(object):
 
         self.execute_commands_list(commands_list)
 
-    # def __repr__(self):
-    #     for each_rover_index in range(len(self._rovers_list)):
-    #         rover_name = self._get_rover_name_by_index(each_rover_index + 1)
-    #         state = self.get_rover_state(rover_name)
-    #         print(f'{state[0]} {state[1]} {state[2]}')
+    def __repr__(self):
+        rovers_states = ''
+        for each_rover_index in range(len(self._rovers_list)):
+            rover_name = self._get_rover_name_by_index(each_rover_index + 1)
+            state = self.get_rover_state(rover_name)
+            if rovers_states == '':
+                rovers_states += (f'{state[0]} {state[1]} {state[2]}')
+            else:
+                rovers_states += (f'\n{state[0]} {state[1]} {state[2]}')
+
+        return rovers_states
 
 if __name__ == '__main__':
     communications = CommunicationCenter()
-    communications.set_grid_size('-1', 'a')
+    communications.execute_commands_from_file('commands_example.txt')
+    print(communications)
