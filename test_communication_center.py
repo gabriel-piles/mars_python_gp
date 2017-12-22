@@ -7,7 +7,7 @@ def test_set_grid_size():
     communications = CommunicationCenter()
     communications.set_grid_size('5', '5')
 
-def test_set_grid_size_exception():
+def test_set_grid_size_fail():
     communications = CommunicationCenter()
     assert not communications.set_grid_size('-1', '0')
     assert not communications.set_grid_size('0', '-1')

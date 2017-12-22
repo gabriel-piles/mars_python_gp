@@ -186,12 +186,20 @@ class CommunicationCenter(object):
         return correct_execution
 
     def execute_commands_from_file(self, file_path):
+        file_executed = True
         commands_list = []
-        with open(file_path) as commands_lines:
-            for each_line in commands_lines:
-                commands_list.append(each_line)
+        try:
+            with open(file_path) as commands_lines:
+                for each_line in commands_lines:
+                    commands_list.append(each_line)
 
-        self.execute_commands_list(commands_list)
+            self.execute_commands_list(commands_list)
+
+        except FileNotFoundError:
+            file_executed = False
+            print('No mission: File not found')
+
+        return file_executed
 
     def __repr__(self):
         rovers_states = ''
@@ -199,13 +207,14 @@ class CommunicationCenter(object):
             rover_name = self._get_rover_name_by_index(each_rover_index + 1)
             state = self.get_rover_state(rover_name)
             if rovers_states == '':
-                rovers_states += (f'{state[0]} {state[1]} {state[2]}')
+                rovers_states += (f'{rover_name}: {state[0]} {state[1]} {state[2]}')
             else:
-                rovers_states += (f'\n{state[0]} {state[1]} {state[2]}')
+                rovers_states += (f'\n{rover_name}: {state[0]} {state[1]} {state[2]}')
 
-        return rovers_states
+        return f'Rovers states:\n{rovers_states}'
 
 if __name__ == '__main__':
     communications = CommunicationCenter()
-    communications.execute_commands_from_file('commands_example.txt')
-    print(communications)
+    path = input("Commands file path: ")
+    if communications.execute_commands_from_file(path):
+        print(communications)
