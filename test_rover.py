@@ -44,25 +44,25 @@ def test_turn_left():
     assert rover.turn_left() == 'E'
     assert rover.turn_left() == 'N'
 
-def test_move_front():
+def test_move_one_position_front():
     rover = Rover('Rover 1')
     rover.set_state(x_position = 1, y_position = 1, orientation = 'N')
-    assert rover.move_front() == (1, 2)
+    assert rover.move_one_position_front() == (1, 2)
 
     rover.set_state(x_position = 1, y_position = 1, orientation = 'E')
-    assert rover.move_front() == (2, 1)
+    assert rover.move_one_position_front() == (2, 1)
 
     rover.set_state(x_position = 1, y_position = 1, orientation = 'S')
-    assert rover.move_front() == (1, 0)
+    assert rover.move_one_position_front() == (1, 0)
 
     rover.set_state(x_position = 1, y_position = 1, orientation = 'W')
-    assert rover.move_front() == (0, 1)
+    assert rover.move_one_position_front() == (0, 1)
 
-def test_get_copy():
+def test_get_rover_copy():
     rover = Rover('Rover 1')
     rover.set_state(x_position = 1, y_position = 1, orientation = 'N')
 
-    rover_copy = rover.get_copy()
+    rover_copy = rover.get_rover_copy()
 
     assert rover_copy.x_position == rover.x_position
     assert rover_copy.y_position == rover.y_position

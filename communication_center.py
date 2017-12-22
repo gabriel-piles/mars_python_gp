@@ -10,11 +10,12 @@ class CommunicationCenter(object):
 
     def set_grid_size(self, x_limit = 0, y_limit = 0):
         try:
+            # No negative size allowed
             if int(x_limit) < 0 or int(y_limit) < 0:
                 raise ValueError
 
-            self._x_limit = int(x_limit)
-            self._y_limit = int(y_limit)
+            self._x_grid_limit = int(x_limit)
+            self._y_grid_limit = int(y_limit)
 
         except ValueError:
             print('Mission aborted: grid initialization error')
@@ -25,15 +26,17 @@ class CommunicationCenter(object):
 
         return True
 
-    def _available_position_rover(self, rover):
+    def _check_if_position_allowed(self, rover):
         correct_position = True
 
-        if rover.x_position > self._x_limit or rover.x_position < 0\
-        or rover.y_position > self._y_limit or rover.y_position < 0:
+        # Checking if the rover is inside the gird
+        if rover.x_position > self._x_grid_limit or rover.x_position < 0\
+        or rover.y_position > self._y_grid_limit or rover.y_position < 0:
             correct_position = False
             print('Mission aborted: Rover out of grid error')
             print(f'Rover: {rover.name}')
 
+        # Checking if the rover collide with other rover
         for each_rover_name, each_rover in self._rovers_list.items():
             if each_rover_name == rover.name:
                 continue
@@ -55,13 +58,16 @@ class CommunicationCenter(object):
     def initialize_rover(self, name, x_position, y_position, orientation):
         print(f'Initializating rover:')
         print(f'{name}, {x_position}, {y_position}, {orientation}')
+
         new_rover = Rover(name)
         correct_init = new_rover.set_state(x_position, y_position, orientation)
 
+        # Two rovers with the same name not allowed
         if name in self._rovers_list:
             correct_init = False
 
-        if correct_init and not self._available_position_rover(new_rover):
+        # A rover can't be initializate in other rover place
+        if correct_init and not self._check_if_position_allowed(new_rover):
             correct_init = False
 
         if correct_init:
@@ -69,6 +75,8 @@ class CommunicationCenter(object):
 
         return correct_init
 
+    # Return the rover position and orientation
+    # (x_position, y_position, orientation)
     def get_rover_state(self, rover_name):
         state = ()
 
@@ -80,7 +88,11 @@ class CommunicationCenter(object):
 
         return state
 
-    def execute_command(self, rover_name, command):
+    # Three commands allowed
+    # R - turn right
+    # L - turn left
+    # M - move one position front
+    def execute_simple_command(self, rover_name, command):
         command_executed = True
 
         if command == 'R':
@@ -88,10 +100,11 @@ class CommunicationCenter(object):
         elif command == 'L':
             self._rovers_list[rover_name].turn_left()
         elif command == 'M':
-            ghost_rover = self._rovers_list[rover_name].get_copy()
-            ghost_rover.move_front()
-            if self._available_position_rover(ghost_rover):
-                self._rovers_list[rover_name].move_front()
+            # Checking if the rover collide with other if it is moved front
+            ghost_rover = self._rovers_list[rover_name].get_rover_copy()
+            ghost_rover.move_one_position_front()
+            if self._check_if_position_allowed(ghost_rover):
+                self._rovers_list[rover_name].move_one_position_front()
             else:
                 command_executed = False
         else:
@@ -101,13 +114,17 @@ class CommunicationCenter(object):
 
         return command_executed
 
-    def _subtract_grid_size_from_command(self, grid_size_string):
-
+    # The grid is the rovers space and is squared
+    # the grid size command is a string with the following format
+    # 'x_grid_limit y_grid_limit'
+    # examples: '1 1', '2 2', '5 100'
+    # '1 2' -> grid with height 1 and width 2
+    def _subtract_grid_size_from_command(self, grid_size_command):
         try:
-            limits_list = grid_size_string.split()
+            limits_list = grid_size_command.split()
             correct_size = self.set_grid_size(limits_list[0], limits_list[1])
         except IndexError:
-            correct_size = self.set_grid_size(grid_size_string, '')
+            correct_size = self.set_grid_size(grid_size_command, '')
 
         return correct_size
 
@@ -115,6 +132,10 @@ class CommunicationCenter(object):
     def _get_rover_name_by_index(index):
         return f'Rover {index}'
 
+    # The initialization command is a string with the following format
+    # 'x_position y_position orientation'
+    # examples: '1 1 N', '2 2 E', '5 100 W'
+    # '1 2 N' -> Rover in the position (1, 2) facing North
     def _initialize_rovers_by_commands(self, initialization_commands):
         correct_init = True
         rover_index = 1
@@ -132,36 +153,46 @@ class CommunicationCenter(object):
                 if self.initialize_rover(name, values[0], values[1], values[2]):
                     rover_index += 1
                 else:
+                    # Something wrong happend
                     correct_init = False
                     break
 
         return correct_init
 
-    def _execute_rovers_commands(self, rovers_commands_list):
+    # Each rover commands is a string with the commands allowed
+    # example = 'MMLRRRLLRLRLM'
+    # 'MMR' -> move front, move front, turn right
+    def _execute_rovers_commands(self, all_rovers_commands_list):
         correct_execution = True
         rover_index = 1
 
-        for each_rover_commands in rovers_commands_list:
+        for each_rover_commands in all_rovers_commands_list:
             rover_name = self._get_rover_name_by_index(rover_index)
             print('Executing rover commands..')
             print(f'Rover: {rover_name}')
 
-            commands_cleared = str(each_rover_commands.strip())
+            # Removing spaces and '\n' from the rovers commands string
+            # for a correct execution
+            each_rover_commands_cleared = str(each_rover_commands.strip())
+            print(f'Commands: {each_rover_commands_cleared}')
 
-            print(f'Commands: {commands_cleared}')
-
-            for each_command in commands_cleared:
-                if not self.execute_command(rover_name, each_command):
+            for each_command in each_rover_commands_cleared:
+                if not self.execute_simple_command(rover_name, each_command):
                     correct_execution = False
                     break
 
-            if correct_execution:
-                rover_index += 1
-            else:
+            rover_index += 1
+
+            if not correct_execution:
                 break
 
         return correct_execution
 
+    # The list of commands has the following format:
+    # First element: grid initialization string
+    # Each rover has two elements in a row
+    #   1 initialization command like '1 1 N'
+    #   2 actions command like 'MLMMMLRLMMRL'
     def execute_commands_list(self, commands_list):
         self._rovers_list = {}
 
@@ -173,10 +204,14 @@ class CommunicationCenter(object):
 
         print('Configuring grid size..')
 
+        # The first command is for fixing the grid size
         if not self._subtract_grid_size_from_command(commands_list[0]):
             correct_execution = False
         else:
             del commands_list[0]
+            # Each rover has two commands in a row in the commands_list
+            # It is necessary to initialize all the rovers before executing the
+            # actions avoiding this way for unwanted rovers collisions
             if not self._initialize_rovers_by_commands(commands_list[::2]):
                 correct_execution = False
             else:
@@ -185,6 +220,8 @@ class CommunicationCenter(object):
 
         return correct_execution
 
+    # Convert the lines of the file in a list of commands for the
+    # function execute_commands_list
     def execute_commands_from_file(self, file_path):
         file_executed = True
         commands_list = []
@@ -193,7 +230,8 @@ class CommunicationCenter(object):
                 for each_line in commands_lines:
                     commands_list.append(each_line)
 
-            self.execute_commands_list(commands_list)
+            if not self.execute_commands_list(commands_list):
+                file_executed = False
 
         except FileNotFoundError:
             file_executed = False

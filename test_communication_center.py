@@ -41,25 +41,25 @@ def test_get_rover_state():
     communications.initialize_rover('Rover 1', 1, 1, 'N')
     assert communications.get_rover_state('Rover 1') == (1, 1, 'N')
 
-def test_execute_command():
+def test_execute_simple_command():
     communications = CommunicationCenter(x_limit = 2, y_limit = 2)
     communications.initialize_rover('Rover 1', 0, 0, 'N')
-    assert communications.execute_command('Rover 1', 'L')
-    assert communications.execute_command('Rover 1', 'R')
-    assert communications.execute_command('Rover 1', 'M')
+    assert communications.execute_simple_command('Rover 1', 'L')
+    assert communications.execute_simple_command('Rover 1', 'R')
+    assert communications.execute_simple_command('Rover 1', 'M')
 
     communications = CommunicationCenter(x_limit = 1, y_limit = 1)
     communications.initialize_rover('Rover N', 1, 1, 'N')
-    assert not communications.execute_command('Rover N', 'M')
+    assert not communications.execute_simple_command('Rover N', 'M')
 
     communications.initialize_rover('Rover E', 1, 0, 'E')
-    assert not communications.execute_command('Rover E', 'M')
+    assert not communications.execute_simple_command('Rover E', 'M')
 
     communications.initialize_rover('Rover S', 0, 0, 'S')
-    assert not communications.execute_command('Rover S', 'M')
+    assert not communications.execute_simple_command('Rover S', 'M')
 
     communications.initialize_rover('Rover W', 0, 1, 'W')
-    assert not communications.execute_command('Rover W', 'M')
+    assert not communications.execute_simple_command('Rover W', 'M')
 
 def test_execute_commands_list():
     communications = CommunicationCenter(x_limit = 2, y_limit = 2)
@@ -90,7 +90,23 @@ def test_execute_commands_from_file(tmpdir):
     commands_file = write_commands_file(tmpdir, commands)
 
     communications = CommunicationCenter()
-    communications.execute_commands_from_file(commands_file.strpath)
+    assert not communications.execute_commands_from_file('')
+    assert communications.execute_commands_from_file(commands_file.strpath)
     assert communications.get_rover_state('Rover 1') == (1, 3, 'N')
     assert communications.get_rover_state('Rover 2') == (5, 1, 'E')
-    # assert print(communications) == '1 3 N\n5 1 E'
+
+def test_execute_commands_from_file_fail(tmpdir):
+    commands = ['0']
+    commands_file = write_commands_file(tmpdir, commands)
+    communications = CommunicationCenter()
+    assert not communications.execute_commands_from_file(commands_file.strpath)
+
+    commands = ['5 5', 'a 1 N']
+    commands_file = write_commands_file(tmpdir, commands)
+    communications = CommunicationCenter()
+    assert not communications.execute_commands_from_file(commands_file.strpath)
+
+    commands = ['5 5', '1 1 N', 'P']
+    commands_file = write_commands_file(tmpdir, commands)
+    communications = CommunicationCenter()
+    assert not communications.execute_commands_from_file(commands_file.strpath)

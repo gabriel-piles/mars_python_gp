@@ -1,9 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# Stores the rover's position and orientation
+# Responsible of the rover's actions execution
 class Rover(object):
 
+    # Allowed orientation values in order for the turns
     ORIENTATION_VALUES = 'NESW'
+
+    # Advance 1 position front is different depending of the rover orientation
+    # this variable has the front move implications per orientation
     MOVE_FRONT = {'N': (0, 1), 'E': (1, 0), 'S': (0, -1), 'W': (-1, 0)}
 
     def __init__(self, name):
@@ -52,24 +58,27 @@ class Rover(object):
         return True
 
     def turn_right(self):
+        # Next element in the ORIENTATION_VALUES variable
         actual_index = Rover.ORIENTATION_VALUES.index(self._orientation)
         next_index = (actual_index + 1) % len(Rover.ORIENTATION_VALUES)
         self._orientation = Rover.ORIENTATION_VALUES[next_index]
         return self._orientation
 
     def turn_left(self):
+        # Previous element in the ORIENTATION_VALUES variable
         actual_index = Rover.ORIENTATION_VALUES.index(self._orientation)
         next_index = (actual_index - 1) % len(Rover.ORIENTATION_VALUES)
         self._orientation = Rover.ORIENTATION_VALUES[next_index]
         return self._orientation
 
-    def move_front(self):
+    def move_one_position_front(self):
         step = Rover.MOVE_FRONT[self._orientation]
         self._x_position += step[0]
         self._y_position += step[1]
         return (self._x_position, self._y_position)
 
-    def get_copy(self):
+    # Return a new rover instance with the same position and orientation than this one
+    def get_rover_copy(self):
         rover_copy = Rover(f'{self.name} Copy')
         rover_copy.set_state(self._x_position, self._y_position, self._orientation)
         return rover_copy
