@@ -1,3 +1,9 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 /__pycache__
 /.cache
+
+/src/__pycache__
+/src/.cache
+
+/test/__pycache__
+/test/.cache
