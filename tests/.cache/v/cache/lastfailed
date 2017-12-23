@@ -1,0 +1,4 @@
+{
+  "test_communication_center.py::test_execute_actions_list": true,
+  "test_communication_center.py::test_initialize_rovers_from_list": true
+}

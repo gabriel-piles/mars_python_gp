@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Stores the rover's position and orientation
-# Responsible of the rover's actions execution
 class RoverInitializationError(Exception):
     pass
 
@@ -47,12 +45,11 @@ class Rover(object):
             self._orientation = orientation
 
         except ValueError:
-            message = 'Mission aborted: Rover initialization error'
-            message += f'Attempt to initializate with the following parameters'
-            message += f'name = {self.name}'
-            message += f'x_position = {x_position}'
-            message += f'y_position = {y_position}'
-            message += f'orientation = {orientation}'
+            message = 'Mission aborted: Rover initialization error\n'
+            message += f'  Rover = {self.name}\n'
+            message += f'  X position = {x_position}\n'
+            message += f'  Y position = {y_position}\n'
+            message += f'  Orientation = {orientation}'
             raise RoverInitializationError(message)
 
     def turn_right(self):

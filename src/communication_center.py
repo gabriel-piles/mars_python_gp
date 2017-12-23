@@ -1,25 +1,75 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from rover import *
-from input_parser import *
-from grid import *
-from rovers_controller import *
+from input_parser import InputParser
+from input_parser import ParseCommandError
+from grid import Grid
+from grid import GridInitializationError
+from rovers_controller import RoversController
+from rovers_controller import RoverOutOfGridError
+from rovers_controller import RoversCollisionError
+from rovers_controller import RoversActionError
+from rover import Rover
+from rover import RoverInitializationError
 
 class CommunicationCenter(object):
-    def __init__(self, x_limit = 0, y_limit = 0):
-        pass
+    def _initialize_rovers_from_list(self, rovers_init_list):
+        try:
+            rover_number = 0
+            for rover_init in rovers_init_list:
+                rover_name = RoversController._get_rover_name_by_number(rover_number)
+
+                x_position = rover_init[0]
+                y_position = rover_init[1]
+                orientation = rover_init[2]
+
+                print(f'Initializing {rover_name}:')
+                print(f'  X position = {x_position}')
+                print(f'  Y position = {y_position}')
+                print(f'  Orientation = {orientation}')
+                self.rovers_controller.initialize_rover(rover_name, x_position, y_position, orientation)
+
+                rover_number += 1
+        except RoverInitializationError as e:
+            print(e)
+        except RoverOutOfGridError as e:
+            print(e)
+        except RoversCollisionError as e:
+            print(e)
+
+    def _execute_actions_list(self, actions_list):
+        try:
+            rover_number = 0
+
+            for each_actions in actions_list:
+                rover_name = RoversController._get_rover_name_by_number(rover_number)
+
+                print(f'Executing {rover_name} actions:')
+                print(f'  Actions = {each_actions}')
+
+                state = self.rovers_controller.execute_rover_actions(rover_name, each_actions)
+
+                print(f'  Final state = {state}')
+
+                rover_number += 1
+
+        except RoversActionError as e:
+            print(e)
+        except RoverOutOfGridError as e:
+            print(e)
+        except RoversCollisionError as e:
+            print(e)
 
     def execute_commands_list(self, commands_list):
         try:
             input_parser = InputParser(commands_list)
             grid = Grid(input_parser.grid_size[0],input_parser.grid_size[1])
-            rovers_controller = RoversController(grid)
-            rovers_controller.initialize_rovers_from_list(input_parser.rovers_init)
-            rovers_controller.execute_actions_list(input_parser.rovers_actions)
-
-            print(rovers_controller)
+            self.rovers_controller = RoversController(grid)
+            self._initialize_rovers_from_list(input_parser.rovers_init)
+            self._execute_actions_list(input_parser.rovers_actions)
 
         except GridInitializationError as e:
+            print(e)
+        except ParseCommandError as e:
             print(e)
 
     # Convert the lines of the file in a list of commands for the

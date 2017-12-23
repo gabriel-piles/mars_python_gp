@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from error_message import ErrorMessage
-
 class ParseCommandError(Exception):
     pass
 
@@ -26,6 +24,12 @@ class InputParser(object):
     def rovers_actions(self):
         return self._rovers_actions
 
+    @staticmethod
+    def _error_message(element, wrong_command):
+        message = f'Mission aborted: Wrong {element} command\n'
+        message += f'  Command = {wrong_command}'
+        return message
+
     # The grid is the rovers space and is squared
     # the grid size command is a string with the following format
     # 'x_grid_limit y_grid_limit'
@@ -38,10 +42,10 @@ class InputParser(object):
             x_limit = int(limits_list[0])
             y_limit = int(limits_list[1])
         except IndexError:
-            message = ErrorMessage.message('Wrong grid size command', grid_size_command)
+            message = InputParser._error_message('grid size', grid_size_command)
             raise ParseCommandError(message)
         except ValueError:
-            message = ErrorMessage.message('Wrong grid size command', grid_size_command)
+            message = InputParser._error_message('grid size', grid_size_command)
             raise ParseCommandError(message)
 
         return (x_limit, y_limit)
@@ -58,10 +62,10 @@ class InputParser(object):
             y_position = int(values[1])
             orientation = values[2]
         except IndexError:
-            message = ErrorMessage.message('Wrong rover initialization command', rover_init_command)
+            message = InputParser._error_message('rover initialization', rover_init_command)
             raise ParseCommandError(message)
         except ValueError:
-            message = ErrorMessage.message('Wrong rover initialization command', rover_init_command)
+            message = InputParser._error_message('rover initialization', rover_init_command)
             raise ParseCommandError(message)
 
         return x_position, y_position, orientation
@@ -71,7 +75,7 @@ class InputParser(object):
         try:
             rover_actions_safe = rover_actions_command.strip()
         except SyntaxError:
-            message = ErrorMessage.message('Wrong actions command', rover_actions_command)
+            message = InputParser._error_message('actions', rover_actions_command)
             raise ParseCommandError(message)
 
         return rover_actions_safe

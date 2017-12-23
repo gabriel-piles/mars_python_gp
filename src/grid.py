@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from error_message import ErrorMessage
 
 class GridInitializationError(Exception):
     pass
@@ -17,11 +16,10 @@ class Grid(object):
             self._y_grid_limit = int(y_limit)
 
         except ValueError:
-            message = 'Mission aborted: grid initialization error\n'
-            message += 'Attempt to initializate with the following parameters\n'
-            message += f'x limit = {x_limit}\n'
-            message += f'y limit = {y_limit}\n'
-
+            message = 'Mission aborted: Grid initialization error\n'
+            message += 'Initialize attempt with the following parameters\n'
+            message += f'  X limit = {x_limit}\n'
+            message += f'  Y limit = {y_limit}'
             raise GridInitializationError(message)
 
     # Check if the position is inside the gird
