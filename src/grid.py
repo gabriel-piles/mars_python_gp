@@ -22,7 +22,7 @@ class Grid(object):
             message += f'  Y limit = {y_limit}'
             raise GridInitializationError(message)
 
-    # Check if the position is inside the gird
+    # Check if the position is inside the grid
     def valid_position(self, x_position, y_position):
         correct_position = True
 

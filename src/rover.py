@@ -6,7 +6,7 @@ class RoverInitializationError(Exception):
 
 class Rover(object):
 
-    # Allowed orientation values in order for the turns
+    # Allowed orientation values in order to do the turns
     ORIENTATION_VALUES = 'NESW'
 
     # Advance 1 position front is different depending of the rover orientation
