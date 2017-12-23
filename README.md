@@ -1,14 +1,16 @@
 
-##### 1. For executing the example commands
+##### 1. To execute the commands example
 
 `python3 example.py`
 
-##### 2. For executing a commands file
+##### 2. To execute a file of commands
 
 `python3 file_execution.py`
 
-##### 3. For executing tests
+##### 3. To execute the tests
 
- `pip install pytest
-  cd tests
-  pytest -v`
+```
+pip install pytest
+cd tests
+pytest -v
+```
