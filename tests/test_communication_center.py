@@ -20,19 +20,3 @@ def test_execute_commands_from_file(tmpdir):
     communications = CommunicationCenter()
     communications.execute_commands_from_file('')
     communications.execute_commands_from_file(commands_file.strpath)
-
-# def test_execute_commands_from_file_fail(tmpdir):
-#     commands = ['0']
-#     commands_file = write_commands_file(tmpdir, commands)
-#     communications = CommunicationCenter()
-#     assert not communications.execute_commands_from_file(commands_file.strpath)
-#
-#     commands = ['5 5', 'a 1 N']
-#     commands_file = write_commands_file(tmpdir, commands)
-#     communications = CommunicationCenter()
-#     assert not communications.execute_commands_from_file(commands_file.strpath)
-#
-#     commands = ['5 5', '1 1 N', 'P']
-#     commands_file = write_commands_file(tmpdir, commands)
-#     communications = CommunicationCenter()
-#     assert not communications.execute_commands_from_file(commands_file.strpath)
