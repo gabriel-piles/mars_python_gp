@@ -97,14 +97,16 @@ class InputParser(object):
     #   2 actions command like 'MLMMMLRLMMRL'
     def parse_list_commands(self, commands_list):
         try:
-            if len(commands_list) != 0:
-                self._grid_size = InputParser.parse_grid_size(commands_list[0])
-                del commands_list[0]
+            if len(commands_list) == 0:
+                raise ValueError
+
+            self._grid_size = InputParser.parse_grid_size(commands_list[0])
+            del commands_list[0]
 
             rovers_init_list = commands_list[::2]
             rovers_actions_list = commands_list[1::2]
 
-            # For getting the same number of initializations and actions
+            # To get the same number of initializations and actions
             if len(rovers_actions_list) < len(rovers_init_list):
                 rovers_actions_list.append('')
 
@@ -112,3 +114,5 @@ class InputParser(object):
             self._parse_rovers_actions_list(rovers_actions_list)
         except TypeError:
             raise ParseCommandError(f'Wrong input commands: {commands_list}')
+        except ValueError:
+            raise ParseCommandError(f'No commands to execute')

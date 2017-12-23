@@ -46,10 +46,6 @@ class Rover(object):
 
         except ValueError:
             message = 'Mission aborted: Rover initialization error\n'
-            message += f'  Rover = {self.name}\n'
-            message += f'  X position = {x_position}\n'
-            message += f'  Y position = {y_position}\n'
-            message += f'  Orientation = {orientation}'
             raise RoverInitializationError(message)
 
     def turn_right(self):

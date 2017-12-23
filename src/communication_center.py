@@ -11,6 +11,9 @@ from rovers_controller import RoversActionError
 from rover import Rover
 from rover import RoverInitializationError
 
+class CommunicationCenterError(Exception):
+    pass
+
 class CommunicationCenter(object):
     def _initialize_rovers_from_list(self, rovers_init_list):
         try:
@@ -30,11 +33,11 @@ class CommunicationCenter(object):
 
                 rover_number += 1
         except RoverInitializationError as e:
-            print(e)
+            raise CommunicationCenterError(e)
         except RoverOutOfGridError as e:
-            print(e)
+            raise CommunicationCenterError(e)
         except RoversCollisionError as e:
-            print(e)
+            raise CommunicationCenterError(e)
 
     def _execute_actions_list(self, actions_list):
         try:
@@ -53,11 +56,11 @@ class CommunicationCenter(object):
                 rover_number += 1
 
         except RoversActionError as e:
-            print(e)
+            raise CommunicationCenterError(e)
         except RoverOutOfGridError as e:
-            print(e)
+            raise CommunicationCenterError(e)
         except RoversCollisionError as e:
-            print(e)
+            raise CommunicationCenterError(e)
 
     def execute_commands_list(self, commands_list):
         try:
@@ -68,9 +71,9 @@ class CommunicationCenter(object):
             self._execute_actions_list(input_parser.rovers_actions)
 
         except GridInitializationError as e:
-            print(e)
+            raise CommunicationCenterError(e)
         except ParseCommandError as e:
-            print(e)
+            raise CommunicationCenterError(e)
 
     # Convert the lines of the file in a list of commands for the
     # function execute_commands_list
@@ -85,3 +88,5 @@ class CommunicationCenter(object):
 
         except FileNotFoundError:
             print('No mission: File not found')
+        except CommunicationCenterError as e:
+            print(e)
