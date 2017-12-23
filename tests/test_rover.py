@@ -2,23 +2,22 @@
 # -*- coding: utf-8 -*-
 import pytest
 from rover import Rover
+from rover import RoverInitializationError
 
 def test_set_state():
     rover = Rover('Rover 1')
-    assert rover.set_state(x_position = 0, y_position = 0, orientation = 'N')
-    assert rover.set_state(x_position = 1, y_position = 1, orientation = 'E')
-    assert rover.set_state(x_position = 2, y_position = 2, orientation = 'S')
-    assert rover.set_state(x_position = 3, y_position = 3, orientation = 'W')
+    rover.set_state(x_position = 0, y_position = 0, orientation = 'N')
+    rover.set_state(x_position = 1, y_position = 1, orientation = 'E')
+    rover.set_state(x_position = 2, y_position = 2, orientation = 'S')
+    rover.set_state(x_position = 3, y_position = 3, orientation = 'W')
 
 def test_set_state_fail():
     rover = Rover('Rover 1')
-    assert not rover.set_state(x_position = -1, y_position = 0, orientation = 'N')
-    assert not rover.set_state(x_position = 0, y_position = -1, orientation = 'N')
-    assert not rover.set_state(x_position = 0, y_position = 0, orientation = 'NW')
-    assert not rover.set_state(x_position = 0, y_position = 0, orientation = 'n')
-    assert not rover.set_state(x_position = 0, y_position = 0, orientation = 'P')
-    assert not rover.set_state(x_position = 'a', y_position = 0, orientation = 'N')
-    assert not rover.set_state(x_position = 0, y_position = 'b', orientation = 'N')
+    with pytest.raises(RoverInitializationError):
+        rover.set_state(x_position = 0, y_position = 0, orientation = 'NW')
+
+    with pytest.raises(RoverInitializationError):
+        rover.set_state(x_position = 0, y_position = 0, orientation = 'n')
 
 def test_get_position():
     rover = Rover('Rover 1')

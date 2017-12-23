@@ -3,6 +3,9 @@
 
 # Stores the rover's position and orientation
 # Responsible of the rover's actions execution
+class RoverInitializationError(Exception):
+    pass
+
 class Rover(object):
 
     # Allowed orientation values in order for the turns
@@ -33,9 +36,6 @@ class Rover(object):
 
     def set_state(self, x_position, y_position, orientation):
         try:
-            if int(x_position) < 0 or int(y_position) <0:
-                raise ValueError
-
             if len(orientation) != 1:
                 raise ValueError
 
@@ -47,15 +47,13 @@ class Rover(object):
             self._orientation = orientation
 
         except ValueError:
-            print('Mission aborted: Rover initialization error')
-            print(f'Attempt to initializate with the following parameters')
-            print(f'name = {self.name}')
-            print(f'x_position = {x_position}')
-            print(f'y_position = {y_position}')
-            print(f'orientation = {orientation}')
-            return False
-
-        return True
+            message = 'Mission aborted: Rover initialization error'
+            message += f'Attempt to initializate with the following parameters'
+            message += f'name = {self.name}'
+            message += f'x_position = {x_position}'
+            message += f'y_position = {y_position}'
+            message += f'orientation = {orientation}'
+            raise RoverInitializationError(message)
 
     def turn_right(self):
         # Next element in the ORIENTATION_VALUES variable
