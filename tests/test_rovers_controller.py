@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import pytest
+import sys
+sys.path.append('../src')
 from rovers_controller import RoversController
 from rovers_controller import RoversCollisionError
 from rovers_controller import RoverOutOfGridError

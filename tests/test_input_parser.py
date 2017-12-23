@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import pytest
+import sys
+sys.path.append('../src')
 from input_parser import InputParser
 from input_parser import ParseCommandError
 

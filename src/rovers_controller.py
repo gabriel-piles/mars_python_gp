@@ -87,3 +87,15 @@ class RoversController(object):
                 self.execute_simple_action(rover_name, each_action)
 
             rover_number += 1
+
+    def __repr__(self):
+        rovers_states = ''
+        for each_rover_index in range(len(self._rovers_list)):
+            rover_name = self._get_rover_name_by_number(each_rover_index + 1)
+            state = self.get_rover_state(rover_name)
+            if rovers_states == '':
+                rovers_states += (f'{rover_name}: {state[0]} {state[1]} {state[2]}')
+            else:
+                rovers_states += (f'\n{rover_name}: {state[0]} {state[1]} {state[2]}')
+
+        return f'Rovers states\n{rovers_states}'

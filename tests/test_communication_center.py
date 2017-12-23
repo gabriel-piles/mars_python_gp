@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import pytest
+import sys
+sys.path.append('../src')
 from communication_center import CommunicationCenter
 
 def write_commands_file(tmpdir, commands_list):

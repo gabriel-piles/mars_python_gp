@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import pytest
+import sys
+sys.path.append('../src')
 from grid import Grid
 from grid import GridInitializationError
 
