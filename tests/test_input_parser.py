@@ -40,7 +40,8 @@ def test_parse_rover_actions():
     assert InputParser.parse_rover_actions('MLRLRLRLRLR\n \t') == 'MLRLRLRLRLR'
 
 def test_parse_list_commands():
-    InputParser([])
+    with pytest.raises(ParseCommandError):
+        InputParser([])
 
     with pytest.raises(ParseCommandError):
         InputParser(1)
