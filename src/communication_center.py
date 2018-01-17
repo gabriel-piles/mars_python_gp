@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from input_parser import InputParser
 from input_parser import ParseCommandError
